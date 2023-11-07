@@ -1,5 +1,5 @@
 [package]
-name = "simple-threadpool"
+name = "simple_threadpool"
 version = "0.1.0"
 edition = "2021"
 
