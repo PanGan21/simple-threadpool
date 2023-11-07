@@ -92,3 +92,41 @@ impl Worker {
         Worker(id, Some(thread))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::{Arc, Mutex};
+
+    #[test]
+    fn create_thread_pool() {
+        let pool = ThreadPool::new(4);
+        assert!(pool.is_ok());
+    }
+
+    #[test]
+    fn spawn_jobs() {
+        let pool = ThreadPool::new(2).expect("Failed to create ThreadPool");
+        let counter = Arc::new(Mutex::new(0));
+
+        for _ in 0..10 {
+            let counter_clone = Arc::clone(&counter);
+            pool.spawn(move || {
+                let mut counter = counter_clone.lock().unwrap();
+                *counter += 1;
+            });
+        }
+
+        // Sleep to ensure all jobs have a chance to complete
+        thread::sleep(std::time::Duration::from_secs(2));
+
+        assert_eq!(*counter.lock().unwrap(), 10);
+    }
+
+    #[test]
+    fn drop_thread_pool() {
+        let _pool = ThreadPool::new(3).expect("Failed to create ThreadPool");
+
+        // No assertion, just testing that it doesn't panic on drop
+    }
+}
