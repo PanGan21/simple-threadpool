@@ -25,9 +25,6 @@ fn main() {
         println!("Job executed in parallel!");
     });
 
-    // Gracefully shutdown the thread pool when done
-    // ...
-
 }
 ```
 
